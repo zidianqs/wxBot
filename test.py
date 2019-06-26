@@ -18,32 +18,37 @@ import thread
 # '''
 
 # 定义Bot
-bot = None
+# bot = None
 
 class IntelligenceWxBot(WXBot):
     def handle_msg_all(self, msg):
         print msg
 
+        if msg['content']['type'] == 0:
+            self.send_msg_by_uid(msg['content']['data'], msg['user']['id'])
+        else:
+            print u'不支持自动回复的消息类型'
+
 def bot_lifecycle():
     bot = IntelligenceWxBot()
     bot.DEBUG = True
-    bot.conf['qr'] = 'png'
+    bot.conf['qr'] = 'tty'
     bot.run()
 
-def ui_lifecycle():
-    while True:
-        str = raw_input('你想说啥...')
-        if bot:
-            bot.send_msg(u'严皓亮', str)
-        else:
-            print bot
-            print u'微信还没初始化'
+# def ui_lifecycle():
+#     while True:
+#         str = raw_input('你想说啥...')
+#         if bot:
+#             bot.send_msg(u'严皓亮', str)
+#         else:
+#             print bot
+#             print u'微信还没初始化'
 
 
 def main():
     try:
         thread.start_new_thread(bot_lifecycle, ())
-        thread.start_new_thread(ui_lifecycle, ())
+        # thread.start_new_thread(ui_lifecycle, ())
     except Exception, e:
         print 'Error: Unable to start thread'
         print e
